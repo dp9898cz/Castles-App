@@ -5,9 +5,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:user_location/user_location.dart';
 
-import '../widgets/app_drawer.dart';
+import '../screens/list_of_object.dart';
 
 class MapScreen extends StatefulWidget {
+  static const routeName = "mapScreen";
   @override
   _MapScreenState createState() => _MapScreenState();
 }
@@ -103,11 +104,25 @@ class _MapScreenState extends State<MapScreen> {
             top: 60,
             left: 15,
             child: FloatingActionButton(
+              heroTag: "menu",
               onPressed: () {
-                scaffoldMapKey.currentState.openDrawer();
+                Navigator.of(context).pushNamed(ListOfObjectsScreen.routeName);
               },
               child: Icon(
-                Icons.menu,
+                Icons.list,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 130,
+            left: 15,
+            child: FloatingActionButton(
+              heroTag: "settings",
+              onPressed: () {
+                print('Settings'); //todo
+              },
+              child: Icon(
+                Icons.settings,
               ),
             ),
           ),
@@ -115,8 +130,9 @@ class _MapScreenState extends State<MapScreen> {
             top: 60,
             right: 15,
             child: FloatingActionButton(
+              heroTag: "search",
               onPressed: () {
-                print('I pressed search.');
+                print('I pressed search.'); //todo
               },
               child: Icon(Icons.search),
             ),
@@ -125,18 +141,20 @@ class _MapScreenState extends State<MapScreen> {
             right: 15,
             bottom: 40,
             child: FloatingActionButton(
+              heroTag: "location",
               onPressed: onLocationChangeTap,
               mini: true,
               child: Icon(
-                  _liveUpdate ? Icons.my_location : Icons.location_searching),
+                _liveUpdate ? Icons.my_location : Icons.location_searching,
+              ),
             ),
           ),
         ],
       ),
-      drawer: AppDrawer(),
     );
   }
 
+  @override
   void dispose() {
     super.dispose();
     markerlocationStream.close();
