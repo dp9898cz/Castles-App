@@ -5,6 +5,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:user_location/user_location.dart';
 
+import '../widgets/app_drawer.dart';
+
 class MapScreen extends StatefulWidget {
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -17,7 +19,9 @@ class _MapScreenState extends State<MapScreen> {
   UserLocationOptions userLocationOptions;
   bool _liveUpdate;
   LatLng currentPos;
-  
+
+  var scaffoldMapKey = GlobalKey<ScaffoldState>();
+
   onLocationChangeTap() {
     setState(() {
       if (_liveUpdate) {
@@ -37,8 +41,6 @@ class _MapScreenState extends State<MapScreen> {
       userLocationOptions.updateMapLocationOnPositionChange = false;
     });
   }
-
-  
 
   @override
   void initState() {
@@ -74,52 +76,64 @@ class _MapScreenState extends State<MapScreen> {
     });
 
     return Scaffold(
-      body: GestureDetector(
-              onHorizontalDragCancel: () {
-                if (_liveUpdate) onDragWithLocationOn();
-              },
-              child: FlutterMap(
-          options: MapOptions(
-            center: LatLng(49.7437572, 15.3386383),
-            zoom: 7.0,
-            plugins: [
-              UserLocationPlugin(),
+      key: scaffoldMapKey,
+      body: Stack(
+        children: <Widget>[
+          FlutterMap(
+            options: MapOptions(
+              center: LatLng(49.7437572, 15.3386383),
+              zoom: 7.0,
+              plugins: [
+                UserLocationPlugin(),
+              ],
+            ),
+            mapController: _mapController,
+            layers: [
+              TileLayerOptions(
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
+                tileProvider: CachedNetworkTileProvider(),
+              ),
+              MarkerLayerOptions(markers: markers),
+              userLocationOptions
             ],
           ),
-          mapController: _mapController,
-          layers: [
-            TileLayerOptions(
-              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: ['a', 'b', 'c'],
-              tileProvider: CachedNetworkTileProvider(),
+          Positioned(
+            top: 60,
+            left: 15,
+            child: FloatingActionButton(
+              onPressed: () {
+                scaffoldMapKey.currentState.openDrawer();
+              },
+              child: Icon(
+                Icons.menu,
+              ),
             ),
-            MarkerLayerOptions(markers: markers),
-            userLocationOptions
-          ],
-        ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            height: 60,
           ),
-          FloatingActionButton(
-            onPressed: () {
-              print('I pressed search.');
-            },
-            child: Icon(Icons.search),
+          Positioned(
+            top: 60,
+            right: 15,
+            child: FloatingActionButton(
+              onPressed: () {
+                print('I pressed search.');
+              },
+              child: Icon(Icons.search),
+            ),
           ),
-          Expanded(child: Container()),
-          FloatingActionButton(
-            onPressed: onLocationChangeTap,
-            mini: true,
-            child: Icon(
-                _liveUpdate ? Icons.my_location : Icons.location_searching),
-          )
+          Positioned(
+            right: 15,
+            bottom: 40,
+            child: FloatingActionButton(
+              onPressed: onLocationChangeTap,
+              mini: true,
+              child: Icon(
+                  _liveUpdate ? Icons.my_location : Icons.location_searching),
+            ),
+          ),
         ],
       ),
+      drawer: AppDrawer(),
     );
   }
 

@@ -12,7 +12,6 @@ class MyApp extends StatelessWidget {
       title: 'Zříceniny',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
-        accentColor: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MapScreen(),

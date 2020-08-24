@@ -1,4 +1,4 @@
-# new_app
+# castles_app
 
 A new Flutter project.
 
